@@ -45,15 +45,9 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = [
-    "rest_framework",
-    "drf_spectacular"
-]
+THIRD_PARTY_APPS = ["rest_framework", "drf_spectacular"]
 
-MY_APPS = [
-    "enderecos",
-    "users"
-]
+MY_APPS = ["enderecos", "users", "produtos"]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
@@ -103,7 +97,7 @@ DATABASES = {
     "outra_config": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
 }
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -134,13 +128,13 @@ SIMPLE_JWT = {
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 2,
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
+    "PAGE_SIZE": 5,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "BandKamp",
-    "DESCRIPTION": "Aplicação para registro de álbuns e músicas",
+    "TITLE": "Kenzon",
+    "DESCRIPTION": "Aplicação Ecommerce",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

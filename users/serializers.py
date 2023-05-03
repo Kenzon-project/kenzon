@@ -8,15 +8,24 @@ import ipdb
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "email", "cpf", "birthdate", "is_seller", "password"]
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "cpf",
+            "birthdate",
+            "is_seller",
+            "password",
+        ]
         extra_kwargs = {
             "password": {"write_only": True},
-            "email": {
-                "validators": [UniqueValidator(queryset=User.objects.all())]
-            }
+            "email": {"validators": [UniqueValidator(queryset=User.objects.all())]},
+            "username": {"required": False},
         }
+
     def create(self, validated_data):
         all_users = str(User.objects.count())
         username = validated_data["first_name"] + all_users + "FSDH"
         return User.objects.create_user(**validated_data, username=username)
-    
