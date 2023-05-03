@@ -9,6 +9,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     cpf = models.PositiveBigIntegerField(
-        unique=True,  validators=[MaxValueValidator(99999999999)])
+        unique=True, validators=[MaxValueValidator(99999999999)]
+    )
     birthdate = models.DateField()
     is_seller = models.BooleanField(blank=True, default=False)
