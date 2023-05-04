@@ -15,7 +15,7 @@ class Pedido(models.Model):
         max_length=20, choices=Status.choices, default=Status.PEDIDO_REALIZADO)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="pedidos",
         default=None)
     produtos = models.ManyToManyField(
