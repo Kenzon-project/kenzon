@@ -10,16 +10,16 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("enderecos", "0001_initial"),
+        ("produtos", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="endereco",
+            model_name="produto",
             name="user",
-            field=models.OneToOneField(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="user_endereco",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT,
+                related_name="produtos",
                 to=settings.AUTH_USER_MODEL,
             ),
         ),

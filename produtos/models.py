@@ -1,18 +1,6 @@
 from django.db import models
 
 
-class CategoriasChoices(models.TextChoices):
-    INFORMATICA = "Informática"
-    ELETRODOMESTICOS = "Eletrodomésticos"
-    CASA = "Casa"
-    LIVROS = "Livros"
-    ELETRONICOS = "Eletrônicos"
-    GAMES = "Games"
-    BRINQUEDOS = "Brinquedos"
-    CRIANCAS = "Crianças"
-    DEFAULT = "Not Informed"
-
-
 class Produto(models.Model):
     nome = models.CharField(max_length=30)
     descricao = models.TextField(max_length=255)
@@ -22,14 +10,11 @@ class Produto(models.Model):
     )
     valor = models.DecimalField(max_digits=8, decimal_places=2, null=False)
     quantidade_estoque = models.IntegerField()
+    disponibilidade = models.BooleanField(default=True)
     vendidos = models.IntegerField(default=0)
-    vendedor = models.ForeignKey(
+    user = models.ForeignKey(
         "users.User",
         related_name="produtos",
         on_delete=models.RESTRICT,
     )
-    categorias = models.CharField(
-        max_length=127,
-        choices=CategoriasChoices.choices,
-        default=CategoriasChoices.DEFAULT,
-    )
+    categorias = models.ManyToManyField("categorias.Categoria", related_name="produtos")
