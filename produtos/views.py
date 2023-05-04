@@ -18,7 +18,6 @@ class ProdutosView(ListCreateAPIView):
     # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsSellerOrReadOnly]
 
-    queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
 
     def perform_create(self, serializer):
@@ -27,30 +26,24 @@ class ProdutosView(ListCreateAPIView):
         # serializer.save(vendedor=self.request.user)
         serializer.save(user=user)
 
+    def get_queryset(self):
+        queryset = Produto.objects.all()
+        categoria_name = self.request.query_params.get("categoria", None)
+        nome = self.request.query_params.get("nome", None)
+        if nome is not None:
+            queryset = Produto.objects.filter(nome__icontains=nome)
+        if categoria_name is not None:
+            queryset = Produto.objects.filter(
+                categorias__nome__icontains=categoria_name
+            )
+        return queryset
+
 
 class ProdutoDetailsView(RetrieveUpdateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsSellerOrReadOnly]
+
     queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
     lookup_url_kwarg = "id"
     lookup_field = "id"
-
-
-class ProdutoNomeDetailsView(ListAPIView):
-    serializer_class = ProdutoSerializer
-    lookup_url_kwarg = "nome"
-    lookup_field = "nome"
-
-    def get_queryset(self):
-        nome = self.kwargs["nome"]
-        queryset = Produto.objects.filter(nome__icontains=nome)
-        return queryset
-
-
-class ProdutoCategoriaDetailsView(ListAPIView):
-    serializer_class = ProdutoSerializer
-    lookup_url_kwarg = "categoria"
-
-    def get_queryset(self):
-        categoria: str = self.kwargs["categoria"]
-        queryset = Produto.objects.filter(categorias__nome__icontains=categoria)
-        return queryset
