@@ -4,7 +4,7 @@ from users.serializers import UserSerializer
 
 
 class ProdutoSerializer(serializers.ModelSerializer):
-    vendedor = UserSerializer()
+    # vendedor = UserSerializer()
 
     class Meta:
         model = Produto
@@ -19,10 +19,6 @@ class ProdutoSerializer(serializers.ModelSerializer):
             "vendedor",
             "categorias",
         ]
-        depth = 1
-        extra_kwargs = {
-            "vendedor": {"required": False},
-        }
 
     def create(self, validated_data):
         return Produto.objects.create(**validated_data)
