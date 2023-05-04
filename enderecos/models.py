@@ -42,9 +42,3 @@ class Endereco(models.Model):
     )
     cep = models.IntegerField()
     complemento = models.CharField(max_length=50)
-
-    user = models.OneToOneField(
-        "users.User", 
-        on_delete=models.CASCADE,
-        related_name="user_endereco",
-    )
