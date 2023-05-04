@@ -13,3 +13,10 @@ class User(AbstractUser):
     )
     birthdate = models.DateField()
     is_seller = models.BooleanField(blank=True, default=False)
+    is_admin = models.BooleanField(default=False)
+
+    address = models.OneToOneField(
+        "enderecos.Endereco", 
+        on_delete=models.CASCADE,
+        related_name="user_endereco",
+    )
