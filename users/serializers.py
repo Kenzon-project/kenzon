@@ -3,6 +3,7 @@ from .models import User
 from rest_framework.validators import UniqueValidator
 import ipdb
 from enderecos.serializers import EnderecoSerializer
+from carrinhos.models import Carrinho
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,11 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "is_admin",
             "address",
+            "carrinho"
         ]
         extra_kwargs = {
             "password": {"write_only": True},
             "email": {"validators": [UniqueValidator(queryset=User.objects.all())]},
             "username": {"read_only": True},
+            "carrinho": {"read_only": True},
             "is_admin": {"default": False}
         }
 
@@ -36,8 +39,11 @@ class UserSerializer(serializers.ModelSerializer):
 
         if validated_data["is_admin"] is True:
             return User.objects.create_superuser(**validated_data, username=username)
+        
+        create_user = User.objects.create_user(**validated_data, username=username)
+        Carrinho.objects.create(user = create_user)
 
-        return User.objects.create_user(**validated_data, username=username)
+        return create_user
     
     def update(self, instance, validated_data):
         is_admin = validated_data.keys()

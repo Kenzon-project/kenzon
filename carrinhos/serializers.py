@@ -1,17 +1,33 @@
 from rest_framework import serializers
-from .models import Carrinho
+from .models import Carrinho, CarrinhoProduto
 from produtos.serializers import ProdutoSerializer
+import ipdb
 
 
 class CarrinhoSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field="username"
-    )
-    produtos = ProdutoSerializer(many=True)
-
+    produto = ProdutoSerializer(read_only=True)
     class Meta:
-        model = Carrinho
-        fields = ["id", "qtd_total", "preco_total", "user", "produtos"]
+        model = CarrinhoProduto
+        fields = ["id", "carrinho_id", "quantidade", "produto"]
+    
 
     def create(self, validated_data):
-        return super().create(validated_data)
+        carrinho = validated_data["carrinho"]
+        produto = validated_data["produto"]
+        quantidade = validated_data["quantidade"]
+
+        carrinho_produto = CarrinhoProduto.objects.filter(carrinho=carrinho, produto=produto).first()
+        produto.quantidade_estoque -= quantidade
+        produto.save()
+        if carrinho_produto:
+            carrinho_produto.quantidade += 1
+            carrinho_produto.save()
+            return carrinho_produto
+        else:
+            return CarrinhoProduto.objects.create(**validated_data)
+
+
+
+   
+
+        
