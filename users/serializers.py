@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import User
 from rest_framework.validators import UniqueValidator
-from django.contrib.auth.hashers import make_password
 import ipdb
 from enderecos.serializers import EnderecoSerializer
 
@@ -39,3 +38,5 @@ class UserSerializer(serializers.ModelSerializer):
             return User.objects.create_superuser(**validated_data, username=username)
 
         return User.objects.create_user(**validated_data, username=username)
+
+
