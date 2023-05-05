@@ -1,0 +1,1086 @@
+openapi: 3.0.3
+info:
+  title: Kenzon API
+  version: 1.0.0
+  description: Aplicação Ecommerce
+paths:
+  /api/pedidos/:
+    get:
+      operationId: api_pedidos_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPedidoList'
+          description: ''
+    post:
+      operationId: api_pedidos_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pedido'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pedido'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Pedido'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+          description: ''
+  /api/pedidos/{id}/:
+    put:
+      operationId: api_pedidos_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pedido'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pedido'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Pedido'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+          description: ''
+    patch:
+      operationId: api_pedidos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPedido'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPedido'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPedido'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+          description: ''
+  /api/pedidos/info/:
+    get:
+      operationId: api_pedidos_info_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPedidoList'
+          description: ''
+  /api/produtos/:
+    get:
+      operationId: api_produtos_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProdutoList'
+          description: ''
+    post:
+      operationId: api_produtos_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produto'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Produto'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Produto'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+          description: ''
+  /api/produtos/{produto_id}/:
+    get:
+      operationId: api_produtos_retrieve
+      parameters:
+      - in: path
+        name: produto_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+          description: ''
+    put:
+      operationId: api_produtos_update
+      parameters:
+      - in: path
+        name: produto_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Produto'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Produto'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Produto'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+          description: ''
+    patch:
+      operationId: api_produtos_partial_update
+      parameters:
+      - in: path
+        name: produto_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProduto'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProduto'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProduto'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Produto'
+          description: ''
+    delete:
+      operationId: api_produtos_destroy
+      parameters:
+      - in: path
+        name: produto_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/:
+    get:
+      operationId: api_users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+    post:
+      operationId: api_users_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/users/{user_id}/:
+    get:
+      operationId: api_users_retrieve
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_users_update
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_users_partial_update
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: api_users_destroy
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/{user_id}/carrinho/:
+    get:
+      operationId: api_users_carrinho_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCarrinhoList'
+          description: ''
+    post:
+      operationId: api_users_carrinho_create
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Carrinho'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Carrinho'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Carrinho'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrinho'
+          description: ''
+  /api/users/login/:
+    post:
+      operationId: api_users_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/users/perfil/{username}/:
+    get:
+      operationId: api_users_perfil_retrieve
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Perfil'
+          description: ''
+components:
+  schemas:
+    Carrinho:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        qtd_total:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        preco_total:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        user:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          readOnly: true
+        produtos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Produto'
+      required:
+      - id
+      - preco_total
+      - produtos
+      - qtd_total
+      - user
+    Categoria:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          $ref: '#/components/schemas/NomeEnum'
+      required:
+      - id
+    Endereco:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bairro:
+          type: string
+          maxLength: 50
+        rua:
+          type: string
+          maxLength: 50
+        numero:
+          type: string
+          maxLength: 10
+        cidade:
+          type: string
+          maxLength: 50
+        estado:
+          $ref: '#/components/schemas/EstadoEnum'
+        cep:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        complemento:
+          type: string
+          maxLength: 50
+      required:
+      - bairro
+      - cep
+      - cidade
+      - complemento
+      - estado
+      - id
+      - numero
+      - rua
+    EstadoEnum:
+      enum:
+      - AC
+      - AL
+      - AP
+      - AM
+      - BA
+      - CE
+      - DF
+      - ES
+      - GO
+      - MA
+      - MT
+      - MS
+      - MG
+      - PA
+      - PB
+      - PR
+      - PE
+      - PI
+      - RJ
+      - RN
+      - RS
+      - RO
+      - RR
+      - SC
+      - SP
+      - SE
+      - TO
+      type: string
+      description: |-
+        * `AC` - Acre Ac
+        * `AL` - Alagoas Al
+        * `AP` - Amapa Ap
+        * `AM` - Amazonas Am
+        * `BA` - Bahia Ba
+        * `CE` - Ceara Ce
+        * `DF` - Distrito Federal Df
+        * `ES` - Espirito Santo Es
+        * `GO` - Goias Go
+        * `MA` - Maranhao Ma
+        * `MT` - Mato Grosso Mt
+        * `MS` - Mato Grosso Do Sul Ms
+        * `MG` - Minas Gerais Mg
+        * `PA` - Para Pa
+        * `PB` - Paraiba Pb
+        * `PR` - Parana Pr
+        * `PE` - Pernambuco Pe
+        * `PI` - Piaui Pi
+        * `RJ` - Rio De Janeiro Rj
+        * `RN` - Rio Grande Do Norte Rn
+        * `RS` - Rio Grande Do Sul Rs
+        * `RO` - Rondonia Ro
+        * `RR` - Roraima Rr
+        * `SC` - Santa Catarina Sc
+        * `SP` - Sao Paulo Sp
+        * `SE` - Sergipe Se
+        * `TO` - Tocantins To
+    Nested:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          maxLength: 30
+        descricao:
+          type: string
+        img:
+          type: string
+          format: uri
+          maxLength: 255
+        valor:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        quantidade_estoque:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        disponibilidade:
+          type: boolean
+        vendidos:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        user:
+          type: integer
+        categorias:
+          type: array
+          items:
+            type: integer
+      required:
+      - categorias
+      - descricao
+      - id
+      - nome
+      - quantidade_estoque
+      - user
+      - valor
+    NomeEnum:
+      enum:
+      - Informática
+      - Eletrodomésticos
+      - Casa
+      - Livros
+      - Eletrônicos
+      - Games
+      - Brinquedos
+      - Crianças
+      - Not Informed
+      type: string
+      description: |-
+        * `Informática` - Informatica
+        * `Eletrodomésticos` - Eletrodomesticos
+        * `Casa` - Casa
+        * `Livros` - Livros
+        * `Eletrônicos` - Eletronicos
+        * `Games` - Games
+        * `Brinquedos` - Brinquedos
+        * `Crianças` - Criancas
+        * `Not Informed` - Default
+    PaginatedCarrinhoList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Carrinho'
+    PaginatedPedidoList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pedido'
+    PaginatedProdutoList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Produto'
+    PaginatedUserList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PatchedPedido:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        produtos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+    PatchedProduto:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          maxLength: 30
+        descricao:
+          type: string
+        img:
+          type: string
+          format: uri
+          maxLength: 255
+        valor:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        quantidade_estoque:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        vendidos:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        disponibilidade:
+          type: boolean
+        user:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          readOnly: true
+        categorias:
+          type: array
+          items:
+            $ref: '#/components/schemas/Categoria'
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        cpf:
+          type: integer
+          maximum: 99999999999
+          minimum: 0
+          format: int64
+        birthdate:
+          type: string
+          format: date
+        is_seller:
+          type: boolean
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        is_admin:
+          type: boolean
+          default: false
+        address:
+          $ref: '#/components/schemas/Endereco'
+    Pedido:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        produtos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - produtos
+      - updated_at
+      - user_id
+    Perfil:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        is_seller:
+          type: boolean
+        address:
+          type: string
+          readOnly: true
+      required:
+      - address
+      - email
+      - username
+    Produto:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          maxLength: 30
+        descricao:
+          type: string
+        img:
+          type: string
+          format: uri
+          maxLength: 255
+        valor:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        quantidade_estoque:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        vendidos:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        disponibilidade:
+          type: boolean
+        user:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          readOnly: true
+        categorias:
+          type: array
+          items:
+            $ref: '#/components/schemas/Categoria'
+      required:
+      - categorias
+      - descricao
+      - id
+      - nome
+      - quantidade_estoque
+      - user
+      - valor
+    StatusEnum:
+      enum:
+      - PEDIDO REALIZADO
+      - EM ANDAMENTO
+      - ENTREGUE
+      type: string
+      description: |-
+        * `PEDIDO REALIZADO` - Pedido Realizado
+        * `EM ANDAMENTO` - Em Andamento
+        * `ENTREGUE` - Entregue
+    TokenObtainPair:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - email
+      - password
+      - refresh
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        cpf:
+          type: integer
+          maximum: 99999999999
+          minimum: 0
+          format: int64
+        birthdate:
+          type: string
+          format: date
+        is_seller:
+          type: boolean
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        is_admin:
+          type: boolean
+          default: false
+        address:
+          $ref: '#/components/schemas/Endereco'
+      required:
+      - address
+      - birthdate
+      - cpf
+      - email
+      - first_name
+      - id
+      - last_name
+      - password
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
