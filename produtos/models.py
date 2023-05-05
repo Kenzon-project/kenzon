@@ -2,6 +2,9 @@ from django.db import models
 
 
 class Produto(models.Model):
+    class Meta:
+        ordering = ["id"]
+
     nome = models.CharField(max_length=30)
     descricao = models.TextField(max_length=255)
     img = models.URLField(
