@@ -4,7 +4,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserSerializer, PerfilSerializer
 from .permissions import UserPermissions
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from enderecos.models import Endereco
 import ipdb
 
