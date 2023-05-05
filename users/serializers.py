@@ -38,6 +38,15 @@ class UserSerializer(serializers.ModelSerializer):
             return User.objects.create_superuser(**validated_data, username=username)
 
         return User.objects.create_user(**validated_data, username=username)
+    
+    def update(self, instance, validated_data):
+        is_admin = validated_data.keys()
+        if "is_admin" in is_admin:
+            validated_data.pop("is_admin")
+        instance.__dict__.update(**validated_data)
+        instance.set_password(instance.password)
+        instance.save()
+        return instance
 
 class PerfilSerializer(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
