@@ -4,32 +4,27 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserSerializer, PerfilSerializer
 from .permissions import UserPermissions, UserPermissionCreate
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    RetrieveAPIView,
+)
 from enderecos.models import Endereco
 import ipdb
 
 
 class UserCreate(ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [UserPermissionCreate]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-    def get_authenticators(self):
-        if self.request.method == 'GET':
-            return [JWTAuthentication()]
-        return []
-    
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [UserPermissionCreate()]
-        return []
-
 
     def perform_create(self, serializer):
         address_data = serializer.validated_data.pop("address", None)
         address_obj = Endereco.objects.create(**address_data)
 
         return serializer.save(address=address_obj)
+
 
 class UserList(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
@@ -40,6 +35,7 @@ class UserList(RetrieveUpdateDestroyAPIView):
 
     lookup_field = "id"
     lookup_url_kwarg = "user_id"
+
 
 class UserPerfil(RetrieveAPIView):
     authentication_classes = [JWTAuthentication]
