@@ -47,11 +47,9 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = ["rest_framework", "drf_spectacular"]
 
-<<<<<<< HEAD
-MY_APPS = ["enderecos", "users", "produtos", "pedidos"]
-=======
-MY_APPS = ["enderecos", "users", "produtos", "categorias"]
->>>>>>> aaebdec175d690a9602fa90cc347ff4f6bc5ab8a
+
+MY_APPS = ["enderecos", "users", "produtos", "pedidos", "categorias"]
+
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
