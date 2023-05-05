@@ -1,5 +1,4 @@
-from rest_framework.generics import (ListCreateAPIView, ListAPIView,
-                                     UpdateAPIView)
+from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView
 from .serializers import PedidoSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -27,7 +26,8 @@ class PedidoInfoView(ListAPIView):
     def get_queryset(self):
         if self.request.user.is_seller:
             return Pedido.objects.filter(
-                "produtos__vendedor__id" == self.request.user.id)
+                "produtos__vendedor__id" == self.request.user.id
+            )
         return Pedido.objects.filter("user" == self.request.user)
 
 

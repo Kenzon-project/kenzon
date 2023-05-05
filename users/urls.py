@@ -6,8 +6,8 @@ from carrinhos.views import CarrinhoView
 
 urlpatterns = [
     path("users/", views.UserCreate.as_view()),
-    path("users/<int:user_id>", views.UserList.as_view()),
-    path("users/perfil/<str:username>", views.UserPerfil.as_view()),
+    path("users/<int:user_id>/", views.UserList.as_view()),
+    path("users/perfil/<str:username>/", views.UserPerfil.as_view()),
     path("users/login/", jwt_views.TokenObtainPairView.as_view()),
     path("users/<int:product_id>/carrinho/", CarrinhoView.as_view()),
 ]

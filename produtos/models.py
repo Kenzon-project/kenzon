@@ -6,7 +6,7 @@ class Produto(models.Model):
         ordering = ["id"]
 
     nome = models.CharField(max_length=30)
-    descricao = models.TextField(max_length=255)
+    descricao = models.TextField()
     img = models.URLField(
         max_length=255,
         default="https://as1.ftcdn.net/v2/jpg/05/04/28/96/1000_F_504289605_zehJiK0tCuZLP2MdfFBpcJdOVxKLnXg1.jpg",
