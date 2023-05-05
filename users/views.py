@@ -2,8 +2,8 @@ from django.shortcuts import render
 from .models import User
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserSerializer, PerfilSerializer
-from .permissions import UserPermissions
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from .permissions import UserPermissions, UserPermissionCreate
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from enderecos.models import Endereco
 import ipdb
@@ -21,7 +21,7 @@ class UserCreate(ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAdminUser()]
+            return [UserPermissionCreate()]
         return []
 
 
