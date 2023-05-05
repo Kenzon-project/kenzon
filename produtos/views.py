@@ -1,18 +1,40 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .permissions import IsSellerOrReadOnly
+from .permissions import IsSellerOrReadOnly, IsSellerOwnerOrReadOnly
 from .serializers import ProdutoSerializer
 from .models import Produto
-from users.models import User
 
 
 class ProdutosView(ListCreateAPIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsSellerOrReadOnly]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsSellerOrReadOnly]
 
-    queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
 
     def perform_create(self, serializer):
-        user = User.objects.get(id=self.request.data.pop("vendedor"))
-        serializer.save(vendedor=user)
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        queryset = Produto.objects.all()
+        categoria_name = self.request.query_params.get("categoria", None)
+        nome = self.request.query_params.get("nome", None)
+        if nome is not None:
+            queryset = Produto.objects.filter(nome__icontains=nome)
+        if categoria_name is not None:
+            queryset = Produto.objects.filter(
+                categorias__nome__icontains=categoria_name
+            )
+        return queryset
+
+
+class ProdutoDetailsView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsSellerOwnerOrReadOnly]
+
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
+    lookup_url_kwarg = "produto_id"
+    lookup_field = "id"
