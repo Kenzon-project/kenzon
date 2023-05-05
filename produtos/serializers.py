@@ -25,18 +25,14 @@ class ProdutoSerializer(serializers.ModelSerializer):
             "user",
             "categorias",
         ]
+        extra_kwargs = {"img": {"required": False}}
 
     def create(self, validated_data):
-        produto = Produto.objects.create(
-            nome=validated_data["nome"],
-            descricao=validated_data["descricao"],
-            img=validated_data["img"],
-            valor=validated_data["valor"],
-            quantidade_estoque=validated_data["quantidade_estoque"],
-            user_id=validated_data["user"].id,
-        )
+        categorias = validated_data.pop("categorias")
+        produto = Produto.objects.create(**validated_data)
+
         categorias_list = []
-        for c in validated_data["categorias"]:
+        for c in categorias:
             created = Categoria.objects.get_or_create(**c)
             categorias_list.append(created[0])
 
