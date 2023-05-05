@@ -6,6 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsSellerOrReadOnly, IsSellerOwnerOrReadOnly
 from .serializers import ProdutoSerializer
 from .models import Produto
+import ipdb
 
 
 class ProdutosView(ListCreateAPIView):
