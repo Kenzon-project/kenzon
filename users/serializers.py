@@ -39,4 +39,20 @@ class UserSerializer(serializers.ModelSerializer):
 
         return User.objects.create_user(**validated_data, username=username)
 
-
+class PerfilSerializer(serializers.ModelSerializer):
+    address = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "email",
+            "is_seller",
+            "address",
+        ]
+    
+    def get_address(self, obj):
+        endereco = obj.address
+        return [{
+            "cidade": endereco.cidade,
+            "estado": endereco.estado
+        }]
