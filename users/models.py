@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class User(AbstractUser):
+    USERNAME_FIELD = 'email'
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
@@ -19,3 +20,5 @@ class User(AbstractUser):
         on_delete=models.CASCADE,
         related_name="user_endereco",
     )
+
+    REQUIRED_FIELDS = [email]
