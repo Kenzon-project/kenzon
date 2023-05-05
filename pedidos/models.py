@@ -12,15 +12,18 @@ class Pedido(models.Model):
         ordering = ["id"]
 
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.PEDIDO_REALIZADO)
+        max_length=20, choices=Status.choices, default=Status.PEDIDO_REALIZADO
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="pedidos",
-        default=None)
+        "users.User", on_delete=models.CASCADE, related_name="pedidos", default=None
+    )
     produtos = models.ManyToManyField(
-        "produtos.Produto", through="pedidos.Expedicao",
-        related_name="pedidos_expedidos")
+        "produtos.Produto",
+        through="pedidos.Expedicao",
+        related_name="pedidos_expedidos",
+    )
 
     def __repr__(self) -> str:
         return f"<Pedido ({self.id}) - {self.status}>"
@@ -29,12 +32,13 @@ class Pedido(models.Model):
 class Expedicao(models.Model):
     class Meta:
         ordering = ["id"]
+
     pedido_id = models.ForeignKey(
-        "pedidos.Pedido", on_delete=models.CASCADE,
-        related_name="expedicao_pedidos")
+        "pedidos.Pedido", on_delete=models.CASCADE, related_name="expedicao_pedidos"
+    )
     produto_id = models.ForeignKey(
-        "produtos.Produto", on_delete=models.CASCADE,
-        related_name="expedicao_produtos")
+        "produtos.Produto", on_delete=models.CASCADE, related_name="expedicao_produtos"
+    )
     quantidade = models.IntegerField()
 
     def __repr__(self) -> str:

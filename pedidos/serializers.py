@@ -8,10 +8,8 @@ from django.conf import settings
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
-        fields = ["id", "status", "created_at", "updated_at", "produtos",
-                  "user_id"]
-        read_only_fields = ["id", "created_at", "updated_at", "user_id",
-                            "produtos"]
+        fields = ["id", "status", "created_at", "updated_at", "produtos", "user_id"]
+        read_only_fields = ["id", "created_at", "updated_at", "user_id", "produtos"]
         depth = 1
 
     def create(self, validated_data: dict) -> Pedido:
@@ -24,7 +22,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             message=f"O seu pedido agora está {validated_data.status}",
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[instance.user.email],
-            fail_silently=False
+            fail_silently=False,
         )
         instance.save()
         return instance

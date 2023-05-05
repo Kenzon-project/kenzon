@@ -21,6 +21,7 @@ class ProdutoSerializer(serializers.ModelSerializer):
             "valor",
             "quantidade_estoque",
             "vendidos",
+            "disponibilidade",
             "user",
             "categorias",
         ]
@@ -41,5 +42,10 @@ class ProdutoSerializer(serializers.ModelSerializer):
 
         produto.categorias.set(categorias_list)
         return produto
+
+    def update(self, instance, validated_data):
+        if validated_data["quantidade_estoque"] == 0:
+            validated_data["disponibilidade"] = False
+        return super().update(instance, validated_data)
 
     ...

@@ -24,10 +24,17 @@ class ProdutosView(ListCreateAPIView):
         nome = self.request.query_params.get("nome", None)
         if nome is not None:
             queryset = Produto.objects.filter(nome__icontains=nome)
+            for produto in queryset:
+                if produto.quantidade_estoque == 0:
+                    produto.disponibilidade = False
+
         if categoria_name is not None:
             queryset = Produto.objects.filter(
                 categorias__nome__icontains=categoria_name
             )
+            for produto in queryset:
+                if produto.quantidade_estoque == 0:
+                    produto.disponibilidade = False
         return queryset
 
 
