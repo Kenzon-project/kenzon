@@ -5,10 +5,8 @@ from .models import Pedido, Expedicao
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
-        fields = ["id", "status", "created_at", "updated_at", "produtos",
-                  "user"]
-        read_only_fields = ["id", "created_at", "updated_at", "user",
-                            "produtos"]
+        fields = ["id", "status", "created_at", "updated_at", "produtos", "user"]
+        read_only_fields = ["id", "created_at", "updated_at", "user", "produtos"]
         depth = 1
 
     def create(self, validated_data: dict) -> Pedido:

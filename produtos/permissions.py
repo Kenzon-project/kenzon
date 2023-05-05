@@ -7,7 +7,7 @@ class IsSellerOrReadOnly(permissions.BasePermission):
         if request.method in SAFE_METHODS:
             return True
         else:
-            return request.user.is_seller
+            return request.user.is_authenticated and request.user.is_seller
 
 
 class IsSellerOwnerOrReadOnly(permissions.BasePermission):
@@ -16,4 +16,8 @@ class IsSellerOwnerOrReadOnly(permissions.BasePermission):
         if request.method in SAFE_METHODS:
             return True
         else:
-            return request.user.is_seller and obj.user == request.user
+            return (
+                request.user.is_authenticated
+                and request.user.is_seller
+                and obj.user == request.user
+            )
