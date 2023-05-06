@@ -21,13 +21,8 @@ class CarrinhoView(ListCreateAPIView):
     def perform_create(self, serializer):
         self.lookup_field = "product_id"
 
-        carrinho =  self.request.user.carrinho
+        carrinho = self.request.user.carrinho
         product = get_object_or_404(Produto, pk=self.kwargs.get("product_id"))
-            
-        return serializer.save(carrinho= carrinho, produto = product, quantidade = 1)
-    
-    
-    
-    
-    
 
+        return serializer.save(
+            carrinho=carrinho, produto=product, quantidade=1)

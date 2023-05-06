@@ -5,8 +5,7 @@ from rest_framework.views import View
 
 class ListAuth(permissions.BasePermission):
     def has_permission(self, request, view: View):
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.is_seller or request.user.is_superuser
+        return request.user.is_seller or request.user.is_superuser
 
 
 class IsSellerOrAdmin(permissions.BasePermission):
