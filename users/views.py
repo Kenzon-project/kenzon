@@ -36,6 +36,14 @@ class UserList(RetrieveUpdateDestroyAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "user_id"
 
+    def perform_update(self, serializer):
+        address_data = serializer.validated_data.pop("address", None)
+
+        if address_data:
+            address_obj = Endereco.objects.update(**address_data)
+            return serializer.save(address=address_obj)
+
+        return serializer.save()
 
 class UserPerfil(RetrieveAPIView):
     authentication_classes = [JWTAuthentication]
