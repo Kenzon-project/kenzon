@@ -1,25 +1,48 @@
 from rest_framework import serializers
 from .models import Pedido, Expedicao
 from produtos.models import Produto
+from produtos.serializers import ProdutoSerializerGet
+from carrinhos.models import CarrinhoProduto, Carrinho
 from django.core.mail import send_mail
 from django.conf import settings
 
 
 class PedidoSerializer(serializers.ModelSerializer):
+    produtos = ProdutoSerializerGet(many=True, read_only=True)
+
     class Meta:
         model = Pedido
-        fields = ["id", "status", "created_at", "updated_at", "produtos", "user_id"]
-        read_only_fields = ["id", "created_at", "updated_at", "user_id", "produtos"]
+        fields = [
+            "id", "status", "created_at", "updated_at", "produtos", "user_id"]
+        read_only_fields = [
+            "id", "created_at", "updated_at", "user_id", "produtos"]
         depth = 1
 
     def create(self, validated_data: dict) -> Pedido:
-        return Pedido.objects.create(**validated_data)
+        pedido = Pedido.objects.create(user=validated_data["user"])
+        carrinho = Carrinho.objects.filter(
+            id=validated_data["user"].carrinho.id).first()
+        carrinho_lista = CarrinhoProduto.objects.filter(
+            carrinho=carrinho)
+        produtos = []
+        for item in carrinho_lista:
+            produto = item.produto
+            produtos.append(produto)
 
-    def update(self, instance: Pedido, validated_data):
-        instance.status = validated_data.status
+        for item in carrinho_lista:
+            produto = item.produto
+            quantidade = item.quantidade
+            Expedicao.objects.create(
+                produto_id=produto, pedido_id=pedido, quantidade=quantidade)
+        pedido.produtos.set(produtos)
+        return pedido
+
+    def update(self, instance: Pedido, validated_data: dict):
+        instance.status = validated_data["status"]
+        print(instance.status)
         send_mail(
             subject="ATUALIZAÇÃO DO STATUS DO SEU PEDIDO",
-            message=f"O seu pedido agora está {validated_data.status}",
+            message=f"O seu pedido agora está {instance.status}",
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[instance.user.email],
             fail_silently=False,
@@ -29,12 +52,6 @@ class PedidoSerializer(serializers.ModelSerializer):
 
 
 class ExpedicaoSerializer(serializers.ModelSerializer):
-    quantidade = serializers.SerializerMethodField()
-
-    def get_quantidade(self, instance: Expedicao):
-        produto = Produto.objects.get(id=instance.produto_id)
-        novo_estoque = produto.quantidade_estoque - instance.quantidade
-        Produto.objects.update({"quantidade_estoque": novo_estoque})
 
     class Meta:
         model = Expedicao
