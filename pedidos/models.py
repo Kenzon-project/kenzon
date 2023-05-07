@@ -19,6 +19,7 @@ class Pedido(models.Model):
     user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="pedidos", default=None
     )
+    valor_total = models.IntegerField(default=0)
     produtos = models.ManyToManyField(
         "produtos.Produto",
         through="pedidos.Expedicao",

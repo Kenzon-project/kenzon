@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from carrinhos.models import Carrinho
 
 
 class User(AbstractUser):
@@ -22,3 +25,13 @@ class User(AbstractUser):
     )
 
     REQUIRED_FIELDS = [email]
+
+    def create_carrinho(self):
+        carrinho = Carrinho.objects.create(user=self)
+        self.carrinho = carrinho
+        self.save()
+
+@receiver(post_save, sender=User)
+def create_carrinho(sender, instance, created, **kwargs):
+    if created:
+        instance.create_carrinho()

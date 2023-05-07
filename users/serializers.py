@@ -4,10 +4,12 @@ from rest_framework.validators import UniqueValidator
 from enderecos.serializers import EnderecoSerializer
 from enderecos.models import Endereco
 from carrinhos.models import Carrinho
+from produtos.serializers import ProdutoSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
     address = EnderecoSerializer()
+    produtos = ProdutoSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -24,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_admin",
             "address",
             "carrinho",
+            "produtos",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
@@ -41,7 +44,6 @@ class UserSerializer(serializers.ModelSerializer):
             return User.objects.create_superuser(**validated_data, username=username)
 
         create_user = User.objects.create_user(**validated_data, username=username)
-        Carrinho.objects.create(user=create_user)
 
         return create_user
 
@@ -65,15 +67,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PerfilSerializer(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
+    produtos = ProdutoSerializer(many=True)
 
     class Meta:
         model = User
-        fields = [
-            "username",
-            "email",
-            "is_seller",
-            "address",
-        ]
+        fields = ["username", "email", "is_seller", "address", "produtos"]
 
     def get_address(self, obj):
         endereco = obj.address

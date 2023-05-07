@@ -9,13 +9,26 @@ class Carrinho(models.Model):
     preco_total = models.IntegerField(null=True, blank=True)
 
     user = models.OneToOneField(
-        "users.User", related_name="carrinho", on_delete=models.CASCADE
+        "users.User", related_name="carrinho", on_delete=models.CASCADE, blank=True, null=True
     )
     produtos = models.ManyToManyField(
         "produtos.Produto",
         through="carrinhos.CarrinhoProduto",
         related_name="produto_carrinho",
     )
+
+    def atualizar_carrinho(self):
+        qtd_total = 0
+        preco_total = 0
+    
+        for item in self.carrinho_produto_carrinhos.all():
+            qtd_total += item.quantidade
+            preco_total += item.produto.valor * item.quantidade
+
+        self.qtd_total = qtd_total
+        self.preco_total = preco_total
+        self.save()
+
 
 
 class CarrinhoProduto(models.Model):

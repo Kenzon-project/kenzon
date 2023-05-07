@@ -1,22 +1,60 @@
 from rest_framework import serializers
 from .models import Pedido, Expedicao
-from produtos.models import Produto
 from produtos.serializers import ProdutoSerializerGet
 from carrinhos.models import CarrinhoProduto, Carrinho
+from carrinhos.serializers import CarrinhoSerializer
 from django.core.mail import send_mail
 from django.conf import settings
+from produtos.models import Produto
+import ipdb
+
+class PedidoProdutoSerializer(serializers.ModelSerializer):
+    quantidade = serializers.SerializerMethodField()
+    valor_total = serializers.SerializerMethodField()
+    class Meta:
+        model = Produto
+        fields = [
+            "id", "nome", "descricao", "img", "valor", "valor_total" ,"quantidade"]
+        depth = 1
+    
+    def get_quantidade(self, produto):
+        user = self.context["request"].user
+        carrinho_produto = CarrinhoProduto.objects.filter(
+            carrinho=user.carrinho.id, produto=produto).first()
+        return carrinho_produto.quantidade if carrinho_produto else 0
+    
+    def get_valor_total(self, produto):
+        user = self.context["request"].user
+        carrinho_produto = CarrinhoProduto.objects.filter(
+            carrinho=user.carrinho.id, produto=produto).first()
+        valor_total = carrinho_produto.quantidade * carrinho_produto.produto.valor
+        return valor_total if carrinho_produto else 0
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        user = self.context["request"].user
+        carrinho_produto = CarrinhoProduto.objects.filter(
+            carrinho=user.carrinho.id, produto=instance.id
+        ).first()
+        if carrinho_produto:
+            carrinho_produto.delete()
+        return data
+
 
 
 class PedidoSerializer(serializers.ModelSerializer):
-    produtos = ProdutoSerializerGet(many=True, read_only=True)
+    produtos = PedidoProdutoSerializer(many=True, read_only=True)
+    valor_total_pedido = serializers.IntegerField(required=False)
 
     class Meta:
         model = Pedido
         fields = [
-            "id", "status", "created_at", "updated_at", "produtos", "user_id"]
+            "id", "status", "created_at", "updated_at", "produtos", "user_id", "valor_total_pedido"]
         read_only_fields = [
             "id", "created_at", "updated_at", "user_id", "produtos"]
         depth = 1
+
 
     def create(self, validated_data: dict) -> Pedido:
         pedido = Pedido.objects.create(user=validated_data["user"])
@@ -24,9 +62,20 @@ class PedidoSerializer(serializers.ModelSerializer):
             id=validated_data["user"].carrinho.id).first()
         carrinho_lista = CarrinhoProduto.objects.filter(
             carrinho=carrinho)
+        if not len(carrinho_lista):
+            raise serializers.ValidationError({"message": "Seu carrinho não tem produtos para ser criado o pedido."})
         produtos = []
+        valor_total_pedido = 0
         for item in carrinho_lista:
+            if item.quantidade > item.produto.quantidade_estoque:
+                carrinho_lista.delete()
+                raise serializers.ValidationError({"message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"})
             produto = item.produto
+            produto.vendidos = item.quantidade
+            produto.quantidade_estoque -= item.quantidade
+            valor_total_pedido += produto.valor * item.quantidade
+            produto.save()
+
             produtos.append(produto)
 
         for item in carrinho_lista:
@@ -34,7 +83,11 @@ class PedidoSerializer(serializers.ModelSerializer):
             quantidade = item.quantidade
             Expedicao.objects.create(
                 produto_id=produto, pedido_id=pedido, quantidade=quantidade)
+            
         pedido.produtos.set(produtos)
+        pedido.valor_total = carrinho.preco_total
+        pedido.valor_total_pedido = valor_total_pedido
+        pedido.save()
         return pedido
 
     def update(self, instance: Pedido, validated_data: dict):
