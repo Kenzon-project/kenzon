@@ -20,6 +20,7 @@ class PedidoView(ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
+
 class PedidoInfoView(ListAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
