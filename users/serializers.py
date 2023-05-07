@@ -9,7 +9,7 @@ from produtos.serializers import ProdutoSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     address = EnderecoSerializer()
-    produtos = ProdutoSerializer(many=True)
+    produtos = ProdutoSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -44,7 +44,6 @@ class UserSerializer(serializers.ModelSerializer):
             return User.objects.create_superuser(**validated_data, username=username)
         
         create_user = User.objects.create_user(**validated_data, username=username)
-        Carrinho.objects.create(user = create_user)
 
         return create_user
     
