@@ -66,8 +66,8 @@ class ProdutoSerializer(serializers.ModelSerializer):
             "descricao",
             "img",
             "valor",
-            "quantidade_estoque",
             "vendidos",
+            "quantidade_estoque",
             "disponibilidade",
             "user",
             "categorias",
@@ -91,4 +91,24 @@ class ProdutoSerializer(serializers.ModelSerializer):
             validated_data["disponibilidade"] = False
         return super().update(instance, validated_data)
 
-    ...
+
+class ProdutoSerializerGet(serializers.ModelSerializer):
+    categorias = CategoriaSerializer(many=True)
+    user = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="username"
+    )
+
+    class Meta:
+        model = Produto
+        fields = [
+            "id",
+            "nome",
+            "descricao",
+            "img",
+            "valor",
+            "vendidos",
+            "disponibilidade",
+            "user",
+            "categorias",
+        ]
+        extra_kwargs = {"img": {"required": False}}
