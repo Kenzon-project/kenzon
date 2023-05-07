@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView
 from .serializers import CarrinhoSerializer
 from .models import CarrinhoProduto
 from rest_framework_simplejwt.authentication import JWTAuthentication

@@ -5,8 +5,10 @@ from rest_framework.generics import (
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsSellerOrReadOnly, IsSellerOwnerOrReadOnly
 from .serializers import ProdutoSerializer
+from categorias.serializer import CategoriaSerializer
 from .models import Produto
-import ipdb
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 class ProdutosView(ListCreateAPIView):
@@ -37,6 +39,46 @@ class ProdutosView(ListCreateAPIView):
                     produto.disponibilidade = False
         return queryset
 
+    @extend_schema(
+        operation_id="produto_post",
+        request=ProdutoSerializer,
+        description="Rota de criação de produto",
+        tags=["Produto"],
+        summary="Criar produto",
+    )
+    def post(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        operation_id="produto_get",
+        description="Buscar produto, esta rota não precisa de autenticação",
+        parameters=[
+            OpenApiParameter(
+                "page",
+                OpenApiTypes.INT,
+                OpenApiParameter.QUERY,
+                description="Número da página",
+            ),
+            OpenApiParameter(
+                "nome",
+                OpenApiTypes.STR,
+                OpenApiParameter.QUERY,
+                description="Filtro por nome do produto",
+            ),
+            OpenApiParameter(
+                "categoria",
+                OpenApiTypes.STR,
+                OpenApiParameter.QUERY,
+                description="Filtro por nome da categoria",
+            ),
+        ],
+        responses=ProdutoSerializer,
+        tags=["Produto"],
+        summary="Rota que busca todos os de produto ",
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class ProdutoDetailsView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
@@ -46,3 +88,39 @@ class ProdutoDetailsView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProdutoSerializer
     lookup_url_kwarg = "produto_id"
     lookup_field = "id"
+
+    @extend_schema(
+        operation_id="produto_get",
+        description="Rota de busca de produto pelo id",
+        tags=["Produto"],
+        summary="Buscar produto pelo id",
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(
+        operation_id="produto_patch",
+        description="Rota de alteração de dados de produto",
+        tags=["Produto"],
+        summary="Altera dados de um produto",
+    )
+    def patch(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        operation_id="produto_put",
+        description="Rota de alteração TODOS os de dados de produto",
+        tags=["Produto"],
+        summary="Altera TODOS dados de um produto ",
+    )
+    def put(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        operation_id="produto_delete",
+        description="Rota de deleção de produto",
+        tags=["Produto"],
+        summary="Deleta um produto",
+    )
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)

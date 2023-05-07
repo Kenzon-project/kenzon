@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import User
 from rest_framework.validators import UniqueValidator
-import ipdb
 from enderecos.serializers import EnderecoSerializer
 from carrinhos.models import Carrinho
 
@@ -23,14 +22,14 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "is_admin",
             "address",
-            "carrinho"
+            "carrinho",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
             "email": {"validators": [UniqueValidator(queryset=User.objects.all())]},
             "username": {"read_only": True},
             "carrinho": {"read_only": True},
-            "is_admin": {"default": False}
+            "is_admin": {"default": False},
         }
 
     def create(self, validated_data):
@@ -39,12 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
 
         if validated_data["is_admin"] is True:
             return User.objects.create_superuser(**validated_data, username=username)
-        
+
         create_user = User.objects.create_user(**validated_data, username=username)
-        Carrinho.objects.create(user = create_user)
+        Carrinho.objects.create(user=create_user)
 
         return create_user
-    
+
     def update(self, instance, validated_data):
         is_admin = validated_data.keys()
         if "is_admin" in is_admin:
@@ -54,8 +53,10 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class PerfilSerializer(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -64,10 +65,7 @@ class PerfilSerializer(serializers.ModelSerializer):
             "is_seller",
             "address",
         ]
-    
+
     def get_address(self, obj):
         endereco = obj.address
-        return [{
-            "cidade": endereco.cidade,
-            "estado": endereco.estado
-        }]
+        return [{"cidade": endereco.cidade, "estado": endereco.estado}]
