@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import User
 from rest_framework.validators import UniqueValidator
 from enderecos.serializers import EnderecoSerializer
+from enderecos.models import Endereco
 from carrinhos.models import Carrinho
 
 
@@ -46,10 +47,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         is_admin = validated_data.keys()
+        address_data = validated_data.pop("address", None)
         if "is_admin" in is_admin:
             validated_data.pop("is_admin")
+
         instance.__dict__.update(**validated_data)
-        instance.set_password(instance.password)
+
+        if "password" in validated_data.items():
+            instance.set_password(validated_data.password)
+
+        if address_data:
+            Endereco.objects.update(**address_data)
+
         instance.save()
         return instance
 

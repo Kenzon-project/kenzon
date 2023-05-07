@@ -58,15 +58,6 @@ class UserList(RetrieveUpdateDestroyAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "user_id"
 
-    def perform_update(self, serializer):
-        address_data = serializer.validated_data.pop("address", None)
-
-        if address_data:
-            address_obj = Endereco.objects.update(**address_data)
-            return serializer.save(address=address_obj)
-
-        return serializer.save()
-
     @extend_schema(
         operation_id="user_get",
         description="Rota de busca de usuário pelo id",
@@ -79,22 +70,20 @@ class UserList(RetrieveUpdateDestroyAPIView):
     @extend_schema(
         operation_id="users_patch",
         description="Rota de alteração de dados de usuário",
-        request=UserSerializer,
         tags=["Usuário"],
         summary="Altera dados de um usuário",
     )
     def patch(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
     @extend_schema(
         operation_id="user_put",
         description="Rota de alteração TODOS os de dados de usuário",
-        request=UserSerializer,
         tags=["Usuário"],
         summary="Altera TODOS dados de um usuário ",
     )
     def put(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        return super().put(request, *args, **kwargs)
 
     @extend_schema(
         operation_id="user_delete",

@@ -27,7 +27,7 @@ class ProdutosView(ListCreateAPIView):
         if nome is not None:
             queryset = Produto.objects.filter(nome__icontains=nome)
             for produto in queryset:
-                if produto.quantidade_estoque == 0:
+                if produto.quantidade_estoque < 1:
                     produto.disponibilidade = False
 
         if categoria_name is not None:
@@ -35,13 +35,13 @@ class ProdutosView(ListCreateAPIView):
                 categorias__nome__icontains=categoria_name
             )
             for produto in queryset:
-                if produto.quantidade_estoque == 0:
+                if produto.quantidade_estoque < 1:
                     produto.disponibilidade = False
+                    produto.save()
         return queryset
 
     @extend_schema(
         operation_id="produto_post",
-        request=ProdutoSerializer,
         description="Rota de criação de produto",
         tags=["Produto"],
         summary="Criar produto",
@@ -100,12 +100,13 @@ class ProdutoDetailsView(RetrieveUpdateDestroyAPIView):
 
     @extend_schema(
         operation_id="produto_patch",
+        request=ProdutoSerializer,
         description="Rota de alteração de dados de produto",
         tags=["Produto"],
         summary="Altera dados de um produto",
     )
     def patch(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
     @extend_schema(
         operation_id="produto_put",
@@ -114,7 +115,7 @@ class ProdutoDetailsView(RetrieveUpdateDestroyAPIView):
         summary="Altera TODOS dados de um produto ",
     )
     def put(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        return super().put(request, *args, **kwargs)
 
     @extend_schema(
         operation_id="produto_delete",
