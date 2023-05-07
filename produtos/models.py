@@ -20,4 +20,4 @@ class Produto(models.Model):
         related_name="produtos",
         on_delete=models.RESTRICT,
     )
-    categorias = models.ManyToManyField("categorias.Categoria", related_name="produtos")
+    categorias = models.ManyToManyField("categorias.Categoria", related_name="produtos_cat")

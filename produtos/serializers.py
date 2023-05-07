@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Produto
-from users.serializers import UserSerializer
 from categorias.serializer import CategoriaSerializer
 from categorias.models import Categoria
 
