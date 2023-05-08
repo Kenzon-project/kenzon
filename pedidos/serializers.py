@@ -4,11 +4,12 @@ from carrinhos.models import CarrinhoProduto, Carrinho
 from django.core.mail import send_mail
 from django.conf import settings
 from produtos.models import Produto
-
+import ipdb
 
 class PedidoProdutoSerializer(serializers.ModelSerializer):
     quantidade = serializers.SerializerMethodField()
     valor_total = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Produto
@@ -21,6 +22,7 @@ class PedidoProdutoSerializer(serializers.ModelSerializer):
             "valor_total",
             "quantidade",
         ]
+            "id", "nome", "descricao", "img", "valor", "valor_total", "quantidade"]
         depth = 1
 
     def get_quantidade(self, produto):
@@ -49,6 +51,7 @@ class PedidoProdutoSerializer(serializers.ModelSerializer):
 
         return valor_total if carrinho_produto else 0
 
+  
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
@@ -112,8 +115,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             produto = item.produto
             quantidade = item.quantidade
             Expedicao.objects.create(
-                produto_id=produto, pedido_id=pedido, quantidade=quantidade
-            )
+                produto_id=produto, pedido_id=pedido, quantidade=quantidade)
 
         pedido.produtos.set(produtos)
         pedido.valor_total = carrinho.preco_total
