@@ -81,6 +81,7 @@ class UserList(RetrieveUpdateDestroyAPIView):
         description="Rota de alteração TODOS os de dados de usuário",
         tags=["Usuário"],
         summary="Altera TODOS dados de um usuário ",
+        exclude=True,
     )
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)

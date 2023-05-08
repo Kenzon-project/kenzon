@@ -1,7 +1,6 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from .serializers import CarrinhoSerializer
 from .models import CarrinhoProduto
-from carrinhos.models import Carrinho
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -40,8 +39,26 @@ class CarrinhoView(ListCreateAPIView):
             carrinho=carrinho, produto=product, quantidade=quantidade
         )
 
+    @extend_schema(
+        operation_id="userCarrinho_post",
+        description="Rota que adiciona produto no carrinho do usuário",
+        tags=["Carrinho"],
+        summary="Adiciona produto ao carrinho",
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
-class CarrinhoEdit(RetrieveUpdateAPIView):
+    @extend_schema(
+        operation_id="userCarrinho_get",
+        description="Rota que busca todos os produtos no carrinho do usuário autenticado",
+        tags=["Carrinho"],
+        summary="Busca todos os produtos no carrinho do usuário autenticado",
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
+class CarrinhoEdit(UpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -99,3 +116,22 @@ class CarrinhoEdit(RetrieveUpdateAPIView):
         carrinho_produto.save()
 
         return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        operation_id="userCarrinho_patch",
+        description="Rota que altera a quantidade de produto no carrinho",
+        tags=["Carrinho"],
+        summary="Altera a quantidade de produto no carrinho",
+    )
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
+    @extend_schema(
+        operation_id="userCarrinho_put",
+        description="Rota que altera a quantidade de produto no carrinho",
+        tags=["Carrinho"],
+        summary="Altera a quantidade de produto no carrinho",
+        exclude=True,
+    )
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)

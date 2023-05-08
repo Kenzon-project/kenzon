@@ -180,7 +180,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Kenzon API",
-    "DESCRIPTION": "Aplicação Ecommerce",
+    "DESCRIPTION": "Aplicação Kenzon Ecommerce",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

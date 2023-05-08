@@ -113,6 +113,7 @@ class ProdutoDetailsView(RetrieveUpdateDestroyAPIView):
         description="Rota de alteração TODOS os de dados de produto",
         tags=["Produto"],
         summary="Altera TODOS dados de um produto ",
+        exclude=True,
     )
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
