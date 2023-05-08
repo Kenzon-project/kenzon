@@ -12,10 +12,12 @@ class OnlyCarrinhoSerializer(serializers.ModelSerializer):
         fields = ["id", "qtd_total", "preco_total"]
         depth = 1
 
+
 class CarrinhoSerializer(serializers.ModelSerializer):
     produto = ProdutoSerializer(read_only=True)
     quantidade = serializers.IntegerField(read_only=True)
     carrinho = OnlyCarrinhoSerializer(read_only=True)
+
     class Meta:
         model = CarrinhoProduto
         fields = ["id", "carrinho_id", "quantidade", "produto", "carrinho"]
@@ -26,18 +28,9 @@ class CarrinhoSerializer(serializers.ModelSerializer):
         valor = produto.valor
         carrinho = validated_data["carrinho"]
 
-        carrinho_produto = CarrinhoProduto.objects.filter(carrinho=carrinho, produto=produto).first()
+        carrinho_produto = CarrinhoProduto.objects.filter(
+            carrinho=carrinho, produto=produto
+        ).first()
         if not carrinho_produto:
             carrinho.preco_total = valor
             return CarrinhoProduto.objects.create(**validated_data)
-        return carrinho_produto
-    
-
-    
-       
-
-
-
-   
-
-        
