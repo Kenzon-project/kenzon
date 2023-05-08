@@ -8,13 +8,15 @@ from django.conf import settings
 from produtos.models import Produto
 import ipdb
 
+
 class PedidoProdutoSerializer(serializers.ModelSerializer):
     quantidade = serializers.SerializerMethodField()
     valor_total = serializers.SerializerMethodField()
+
     class Meta:
         model = Produto
         fields = [
-            "id", "nome", "descricao", "img", "valor", "valor_total" ,"quantidade"]
+            "id", "nome", "descricao", "img", "valor", "valor_total", "quantidade"]
         depth = 1
     
     def get_quantidade(self, produto):
@@ -29,7 +31,7 @@ class PedidoProdutoSerializer(serializers.ModelSerializer):
             carrinho=user.carrinho.id, produto=produto).first()
         valor_total = carrinho_produto.quantidade * carrinho_produto.produto.valor
         return valor_total if carrinho_produto else 0
-    
+  
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
@@ -55,7 +57,6 @@ class PedidoSerializer(serializers.ModelSerializer):
             "id", "created_at", "updated_at", "user_id", "produtos"]
         depth = 1
 
-
     def create(self, validated_data: dict) -> Pedido:
         pedido = Pedido.objects.create(user=validated_data["user"])
         carrinho = Carrinho.objects.filter(
@@ -63,13 +64,15 @@ class PedidoSerializer(serializers.ModelSerializer):
         carrinho_lista = CarrinhoProduto.objects.filter(
             carrinho=carrinho)
         if not len(carrinho_lista):
-            raise serializers.ValidationError({"message": "Seu carrinho não tem produtos para ser criado o pedido."})
+            raise serializers.ValidationError({
+                "message": "Seu carrinho não tem produtos para ser criado o pedido."})
         produtos = []
         valor_total_pedido = 0
         for item in carrinho_lista:
             if item.quantidade > item.produto.quantidade_estoque:
                 carrinho_lista.delete()
-                raise serializers.ValidationError({"message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"})
+                raise serializers.ValidationError({
+                    "message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"})
             produto = item.produto
             produto.vendidos = item.quantidade
             produto.quantidade_estoque -= item.quantidade
@@ -83,7 +86,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             quantidade = item.quantidade
             Expedicao.objects.create(
                 produto_id=produto, pedido_id=pedido, quantidade=quantidade)
-            
+
         pedido.produtos.set(produtos)
         pedido.valor_total = carrinho.preco_total
         pedido.valor_total_pedido = valor_total_pedido

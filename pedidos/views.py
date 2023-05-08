@@ -20,18 +20,18 @@ class PedidoView(ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-
 class PedidoInfoView(ListAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PedidoSerializer
 
     def get_queryset(self):
-        if self.request.user.is_seller:
+        seller = self.request.user.is_seller
+        if seller:
             return Pedido.objects.filter(
-                "produtos__vendedor__id" == self.request.user.id
+                produtos__user=self.request.user
             )
-        return Pedido.objects.filter("user" == self.request.user)
+        return Pedido.objects.filter(user=self.request.user)
 
 
 class PedidoUpdateView(UpdateAPIView):
