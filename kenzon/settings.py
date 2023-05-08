@@ -15,6 +15,7 @@ from datetime import timedelta
 import os
 import dotenv
 from django.core.management.utils import get_random_secret_key
+import dj_database_url
 
 dotenv.load_dotenv()
 
@@ -32,6 +33,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 DEBUG = True
 
 ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS += [RENDER_EXTERNAL_HOSTNAME, "0.0.0.0"]
 
 
 # Application definition
@@ -65,6 +69,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -114,6 +119,16 @@ DATABASES = {
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+if DATABASE_URL:
+    db_from_env = dj_database_url.config(
+        default=DATABASE_URL, conn_max_age=500, ssl_require=True
+    )
+    DATABASES["default"].update(db_from_env)
+    DEBUG = False
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
