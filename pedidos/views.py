@@ -43,10 +43,8 @@ class PedidoInfoView(ListAPIView):
 
     def get_queryset(self):
         if self.request.user.is_seller:
-            return Pedido.objects.filter(
-                "produtos__vendedor__id" == self.request.user.id
-            )
-        return Pedido.objects.filter("user" == self.request.user)
+            return Pedido.objects.filter(produtos__user__id=self.request.user.id)
+        return Pedido.objects.filter(user=self.request.user)
 
     @extend_schema(
         operation_id="pedido_get",
