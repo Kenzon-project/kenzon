@@ -82,6 +82,7 @@ class PedidoSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data: dict) -> Pedido:
+        user = validated_data["user"]
         pedido = Pedido.objects.create(user=validated_data["user"])
         carrinho = Carrinho.objects.filter(
             id=validated_data["user"].carrinho.id
@@ -120,11 +121,17 @@ class PedidoSerializer(serializers.ModelSerializer):
         pedido.valor_total = carrinho.preco_total
         pedido.valor_total_pedido = valor_total_pedido
         pedido.save()
+        send_mail(
+            subject="PEDIDO CRIADO COM SUCESSO",
+            message=f"Parabéns {user.first_name}, seu pedido foi criado com sucesso.",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
         return pedido
 
     def update(self, instance: Pedido, validated_data: dict):
         instance.status = validated_data["status"]
-        print(instance.status)
         send_mail(
             subject="ATUALIZAÇÃO DO STATUS DO SEU PEDIDO",
             message=f"O seu pedido agora está {instance.status}",
