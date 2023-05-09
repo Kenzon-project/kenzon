@@ -34,7 +34,6 @@ class CarrinhoView(ListCreateAPIView):
         product = get_object_or_404(Produto, pk=self.kwargs.get("product_id"))
         quantidade = 1
         carrinho = self.request.user.carrinho
-
         return serializer.save(
             carrinho=carrinho, produto=product, quantidade=quantidade
         )
