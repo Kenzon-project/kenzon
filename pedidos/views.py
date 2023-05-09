@@ -1,4 +1,5 @@
 from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView
+from rest_framework.views import Response, status
 from .serializers import PedidoSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
