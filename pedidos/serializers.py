@@ -7,16 +7,16 @@ from produtos.models import Produto
 
 
 class PedidoProdutoSerializer(serializers.ModelSerializer):
+    quantidade = serializers.SerializerMethodField()
+
     class Meta:
         model = Produto
-        fields = [
-            "id",
-            "nome",
-            "descricao",
-            "img",
-            "valor",
-        ]
+        fields = ["id", "nome", "descricao", "img", "valor", "quantidade"]
         depth = 1
+
+    def get_quantidade(self, produto):
+        qtd = Expedicao.objects.filter(produto_id=produto).first()
+        return qtd.quantidade
 
 
 class PedidoSerializer(serializers.ModelSerializer):
@@ -42,7 +42,7 @@ class PedidoSerializer(serializers.ModelSerializer):
         return pedido.valor_total
 
     def get_quantidade(self, pedido):
-        qtd = Expedicao.objects.filter(pedido_id=pedido.id).first()
+        qtd = Expedicao.objects.filter(pedido_id=pedido).first()
         return qtd.quantidade
 
     def create(self, validated_data: dict):
@@ -85,7 +85,9 @@ class PedidoSerializer(serializers.ModelSerializer):
                     produtos_vendedor.append(produto_list)
                     for item in carrinho_lista:
                         if produto_list.id == item.produto.id:
-                            valor_total_pedido += produto_list.valor * item.quantidade
+                            valor_total_pedido += (
+                                int(produto_list.valor) * item.quantidade
+                            )
 
             for item in carrinho_lista:
                 produto = item.produto
