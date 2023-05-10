@@ -4,19 +4,16 @@ from carrinhos.models import CarrinhoProduto, Carrinho
 from django.core.mail import send_mail
 from django.conf import settings
 from produtos.models import Produto
+import ipdb
 
 
 class PedidoProdutoSerializer(serializers.ModelSerializer):
-    quantidade = serializers.SerializerMethodField()
 
     class Meta:
         model = Produto
-        fields = ["id", "nome", "descricao", "img", "valor", "quantidade"]
+        fields = ["id", "nome", "descricao", "img", "valor"]
         depth = 1
 
-    def get_quantidade(self, produto):
-        qtd = Expedicao.objects.filter(produto_id=produto).first()
-        return qtd.quantidade
 
 
 class PedidoSerializer(serializers.ModelSerializer):
@@ -54,7 +51,7 @@ class PedidoSerializer(serializers.ModelSerializer):
                 {"message": "Seu carrinho não tem produtos para ser criado o pedido."}
             )
 
-        vendedores = []
+
         produtos = []
         pedidos = []
 
@@ -71,35 +68,22 @@ class PedidoSerializer(serializers.ModelSerializer):
             produto.quantidade_estoque -= item.quantidade
             produto.save()
             produtos.append(produto)
-            vendedores.append(produto.user)
 
-        vendedores_set = set(vendedores)
 
-        for vendedor in vendedores_set:
+        for produto_list in produtos:
             pedido = Pedido.objects.create(user=validated_data["user"])
-            produtos_vendedor = []
             valor_total_pedido = 0
-
-            for produto_list in produtos:
-                if produto_list.user == vendedor:
-                    produtos_vendedor.append(produto_list)
-                    for item in carrinho_lista:
-                        if produto_list.id == item.produto.id:
-                            valor_total_pedido += (
-                                int(produto_list.valor) * item.quantidade
-                            )
-
             for item in carrinho_lista:
-                produto = item.produto
-                quantidade = item.quantidade
-                Expedicao.objects.create(
-                    produto_id=produto, pedido_id=pedido, quantidade=quantidade
-                )
-
-            pedido.produtos.set(produtos_vendedor)
-            pedido.valor_total = carrinho.preco_total
-            pedido.valor_total_pedido = valor_total_pedido
+                if produto_list.id == item.produto.id:
+                    valor_total_pedido = (int(produto_list.valor) * item.quantidade)
+                    produto = item.produto
+                    quantidade = item.quantidade
+                    Expedicao.objects.create(produto_id=produto, pedido_id=pedido, quantidade=quantidade)
+     
+            pedido.produtos.add(produto_list)
+            pedido.valor_total = valor_total_pedido
             pedido.save()
+            pedidos.append(pedido)
             send_mail(
                 subject=f"PEDIDO {pedido.id} CRIADO COM SUCESSO",
                 message=f"Parabéns {user.first_name}, seu pedido foi criado com sucesso.",
@@ -107,8 +91,6 @@ class PedidoSerializer(serializers.ModelSerializer):
                 recipient_list=[user.email],
                 fail_silently=False,
             )
-            pedidos.append(pedido)
-
         carrinho_lista.delete()
         return pedido
 
