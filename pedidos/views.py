@@ -48,16 +48,18 @@ class PedidoInfoView(ListAPIView):
     serializer_class = PedidoSerializer
 
     def get_queryset(self):
-            return Pedido.objects.filter(produtos__user__id=self.request.user.id)
+        return Pedido.objects.filter(
+                produtos__user__id=self.request.user.id)
 
     @extend_schema(
         operation_id="pedido_get",
-        description="Rota que busca todos os pedidos do usuários",
+        description="Rota que busca todos os pedidos vendidos do usuário",
         tags=["Pedido"],
-        summary="Busca todos os pedidos do usuários",
+        summary="Busca todos os pedidos vendidos do usuário",
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
 
 class PedidoInfoViewBuy(ListAPIView):
     authentication_classes = [JWTAuthentication]
@@ -70,9 +72,9 @@ class PedidoInfoViewBuy(ListAPIView):
 
     @extend_schema(
         operation_id="pedido_get",
-        description="Rota que busca todos os pedidos do usuários",
+        description="Rota que busca todos os pedidos comprados do usuário",
         tags=["Pedido"],
-        summary="Busca todos os pedidos do usuários",
+        summary="Busca todos os pedidos comprados do usuário",
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
