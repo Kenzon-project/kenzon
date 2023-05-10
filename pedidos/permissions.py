@@ -14,3 +14,8 @@ class ListAuth(permissions.BasePermission):
 class IsSellerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view: View, obj: User) -> bool:
         return request.user.is_seller or request.user.is_superuser
+    
+
+class IsSeller(permissions.BasePermission):
+    def has_permission(self, request, view: View) -> bool:
+        return request.user.is_seller

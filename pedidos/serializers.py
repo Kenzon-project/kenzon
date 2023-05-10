@@ -4,13 +4,12 @@ from carrinhos.models import CarrinhoProduto, Carrinho
 from django.core.mail import send_mail
 from django.conf import settings
 from produtos.models import Produto
+from produtos.serializers import ProdutoSerializer
 from rest_framework.views import Response, status
 import ipdb
 
 
 class PedidoProdutoSerializer(serializers.ModelSerializer):
-    quantidade = serializers.SerializerMethodField()
-    valor_total = serializers.SerializerMethodField()
 
     class Meta:
         model = Produto
@@ -20,53 +19,16 @@ class PedidoProdutoSerializer(serializers.ModelSerializer):
             "descricao",
             "img",
             "valor",
-            "valor_total",
-            "quantidade",
         ]
         depth = 1
 
-    def get_quantidade(self, produto):
-        if self.context["request"].method == "POST":
-            user = self.context["request"].user
-            carrinho_produto = CarrinhoProduto.objects.filter(
-                carrinho=user.carrinho.id, produto=produto
-            ).first()
-        else:
-            carrinho_produto = Expedicao.objects.filter(produto_id=produto).first()
 
-        return carrinho_produto.quantidade if carrinho_produto else 0
-
-    def get_valor_total(self, produto):
-        if self.context["request"].method == "POST":
-            user = self.context["request"].user
-            carrinho_produto = CarrinhoProduto.objects.filter(
-                carrinho=user.carrinho.id, produto=produto
-            ).first()
-            valor_total = carrinho_produto.quantidade * produto.valor
-        else:
-            carrinho_produto = carrinho_produto = Expedicao.objects.filter(
-                produto_id=produto
-            ).first()
-            valor_total = carrinho_produto.quantidade * produto.valor
-
-        return valor_total if carrinho_produto else 0
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        user = self.context["request"].user
-        carrinho_produto = CarrinhoProduto.objects.filter(
-            carrinho=user.carrinho.id, produto=instance.id
-        ).first()
-        if carrinho_produto:
-            if self.context["request"].method == "POST":
-                carrinho_produto.delete()
-        return data
 
 
 class PedidoSerializer(serializers.ModelSerializer):
     produtos = PedidoProdutoSerializer(many=True, read_only=True)
-    valor_total_pedido = serializers.IntegerField(required=False)
+    valor_total_pedido = serializers.SerializerMethodField()
+    quantidade = serializers.SerializerMethodField()
 
     class Meta:
         model = Pedido
@@ -75,88 +37,41 @@ class PedidoSerializer(serializers.ModelSerializer):
             "status",
             "created_at",
             "updated_at",
-            "produtos",
             "user_id",
             "valor_total_pedido",
+            "quantidade",
+            "produtos",
         ]
         read_only_fields = ["id", "created_at", "updated_at", "user_id", "produtos"]
-        depth = 1
+    
+    def get_valor_total_pedido(self, pedido):
+        return pedido.valor_total
+    def get_quantidade(self, pedido):
+        qtd = Expedicao.objects.filter(pedido_id = pedido.id).first()
+        return qtd.quantidade
 
     def create(self, validated_data: dict):
-        # user = validated_data["user"]
-        # # pedido = Pedido.objects.create(user=validated_data["user"])
-        # carrinho = Carrinho.objects.filter(
-        #     id=validated_data["user"].carrinho.id
-        # ).first()
-        # carrinho_lista = CarrinhoProduto.objects.filter(carrinho=carrinho)
-        # if not len(carrinho_lista):
-        #     raise serializers.ValidationError(
-        #         {"message": "Seu carrinho não tem produtos para ser criado o pedido."}
-        #     )
-        # produtos = []
-        # vendedores = []
-        # valor_total_pedido = 0
-        # for item in carrinho_lista:
-        #     if item.quantidade > item.produto.quantidade_estoque:
-        #         carrinho_lista.delete()
-        #         raise serializers.ValidationError(
-        #             {
-        #                 "message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"
-        #             }
-        #         )
-        #     produto = item.produto
-        #     produto.vendidos += item.quantidade
-        #     produto.quantidade_estoque -= item.quantidade
-        #     vendedores.append(produto.user)
-        #     valor_total_pedido += produto.valor * item.quantidade
-        #     produto.save()
-
-        #     produtos.append(produto)
-
-        # vendedores_set = set(vendedores)
-        # for vendedor in vendedores_set:
-        #     print(vendedor)
-
-        # print(vendedores_set)
-        # for item in carrinho_lista:
-        #     produto = item.produto
-        #     quantidade = item.quantidade
-        #     Expedicao.objects.create(
-        #         produto_id=produto, pedido_id=pedido, quantidade=quantidade
-        #     )
-
-        # pedido.produtos.set(produtos)
-        # pedido.valor_total = carrinho.preco_total
-        # pedido.valor_total_pedido = valor_total_pedido
-        # pedido.save()
-        # send_mail(
-        #     subject="PEDIDO CRIADO COM SUCESSO",
-        #     message=f"Parabéns {user.first_name}, seu pedido foi criado com sucesso.",
-        #     from_email=settings.EMAIL_HOST_USER,
-        #     recipient_list=[user.email],
-        #     fail_silently=False,
-        # )
         user = validated_data["user"]
-        # pedido = Pedido.objects.create(user=validated_data["user"])
         carrinho = Carrinho.objects.filter(
-            id=validated_data["user"].carrinho.id
+        id=user.carrinho.id
         ).first()
         carrinho_lista = CarrinhoProduto.objects.filter(carrinho=carrinho)
         if not len(carrinho_lista):
-            raise serializers.ValidationError(
-                {"message": "Seu carrinho não tem produtos para ser criado o pedido."}
-            )
+            raise serializers.ValidationError({"message": "Seu carrinho não tem produtos para ser criado o pedido."})
+        
+
         vendedores = []
         produtos = []
+        pedidos = []
 
         for item in carrinho_lista:
             if item.quantidade > item.produto.quantidade_estoque:
                 carrinho_lista.delete()
                 raise serializers.ValidationError(
-                    {
-                        "message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"
-                    }
-                )
+                {
+                    "message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"
+                }
+            )
             produto = item.produto
             produto.vendidos += item.quantidade
             produto.quantidade_estoque -= item.quantidade
@@ -165,7 +80,6 @@ class PedidoSerializer(serializers.ModelSerializer):
             vendedores.append(produto.user)
 
         vendedores_set = set(vendedores)
-        pedidos = []
 
         for vendedor in vendedores_set:
             pedido = Pedido.objects.create(user=validated_data["user"])
@@ -183,7 +97,7 @@ class PedidoSerializer(serializers.ModelSerializer):
                 produto = item.produto
                 quantidade = item.quantidade
                 Expedicao.objects.create(
-                    produto_id=produto, pedido_id=pedido, quantidade=quantidade
+                produto_id=produto, pedido_id=pedido, quantidade=quantidade
                 )
 
             pedido.produtos.set(produtos_vendedor)
@@ -197,12 +111,16 @@ class PedidoSerializer(serializers.ModelSerializer):
                 recipient_list=[user.email],
                 fail_silently=False,
             )
-
             pedidos.append(pedido)
 
+
+        carrinho_lista.delete()
         return pedido
 
+
     def update(self, instance: Pedido, validated_data: dict):
+        if not "status" in validated_data:
+            raise serializers.ValidationError({"message": "Nenhum dado para atualizar foi passado"})
         vendedor = Pedido.objects.filter(
             produtos__user=self.context["request"].user, id=instance.id
         )

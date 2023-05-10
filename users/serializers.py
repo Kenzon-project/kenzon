@@ -5,6 +5,7 @@ from enderecos.serializers import EnderecoSerializer
 from enderecos.models import Endereco
 from carrinhos.models import Carrinho
 from produtos.serializers import ProdutoSerializer
+import ipdb
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,9 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
             validated_data.pop("is_admin")
 
         instance.__dict__.update(**validated_data)
-
-        if "password" in validated_data.items():
-            instance.set_password(validated_data.password)
+        if "password" in validated_data:
+            instance.set_password(validated_data["password"])
 
         if address_data:
             Endereco.objects.update(**address_data)

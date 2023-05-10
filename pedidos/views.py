@@ -4,7 +4,7 @@ from .serializers import PedidoSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import Pedido
-from .permissions import IsSellerOrAdmin, ListAuth
+from .permissions import IsSellerOrAdmin, ListAuth, IsSeller
 from drf_spectacular.utils import extend_schema
 
 
@@ -15,8 +15,10 @@ class PedidoView(ListCreateAPIView):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
 
+
     def perform_create(self, serializer: PedidoSerializer):
         serializer.save(user=self.request.user)
+
 
     @extend_schema(
         operation_id="pedido_post",
@@ -25,7 +27,10 @@ class PedidoView(ListCreateAPIView):
         summary="Cria um pedido",
     )
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({"message": "Pedido realizado com sucesso."}, status=status.HTTP_201_CREATED)
 
     @extend_schema(
         operation_id="pedido_get",
@@ -39,12 +44,28 @@ class PedidoView(ListCreateAPIView):
 
 class PedidoInfoView(ListAPIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsSeller]
+    serializer_class = PedidoSerializer
+
+    def get_queryset(self):
+            return Pedido.objects.filter(produtos__user__id=self.request.user.id)
+
+    @extend_schema(
+        operation_id="pedido_get",
+        description="Rota que busca todos os pedidos do usuários",
+        tags=["Pedido"],
+        summary="Busca todos os pedidos do usuários",
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+class PedidoInfoViewBuy(ListAPIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PedidoSerializer
 
     def get_queryset(self):
-        if self.request.user.is_seller:
-            return Pedido.objects.filter(produtos__user__id=self.request.user.id)
+
         return Pedido.objects.filter(user=self.request.user)
 
     @extend_schema(
