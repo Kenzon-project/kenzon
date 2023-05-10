@@ -9,7 +9,7 @@
 
 A API tem um total de 5 endpoints, podendo cadastrar usuários, realizar login, cadastrar produtos, inserir item no carrinho, e realizar pedidos. <br/>
 
-<a href="https://insomnia.rest/run/?label=Kenzon-API&uri=https%3A%2F%2Fgithub.com%2FKenzon-project%2Fkenzon%2Fblob%2Fdevelop%2FInsomnia_2023-05-04.json" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
+<a href="https://insomnia.rest/run/?label=Kenzon-API&uri=https%3A%2F%2Fgithub.com%2FKenzon-project%2Fkenzon%2Fblob%2Fdevelop%2FKenzon_Insomnia" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
 
 <blockquote> Para importar o JSON no Insomnia é só clicar no botão "Run in Insomnia". Depois é só seguir os passos que ele irá importar todos os endpoints em seu insomnia.
 </blockquote>
