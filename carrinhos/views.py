@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView, CreateAPIView
 from .serializers import CarrinhoSerializer
 from .models import CarrinhoProduto
 from rest_framework import status
@@ -11,7 +11,7 @@ from produtos.models import Produto
 from drf_spectacular.utils import extend_schema
 
 
-class CarrinhoView(ListCreateAPIView):
+class CarrinhoView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [UserPermissions]
 
@@ -46,6 +46,14 @@ class CarrinhoView(ListCreateAPIView):
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
+
+class CarrinhoListView(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [UserPermissions]
+
+    queryset = CarrinhoProduto.objects.all()
+    serializer_class = CarrinhoSerializer
 
     @extend_schema(
         operation_id="userCarrinho_get",
