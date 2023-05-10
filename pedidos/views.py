@@ -74,7 +74,7 @@ class PedidoInfoViewBuy(ListAPIView):
         operation_id="pedido_get",
         description="Rota que busca todos os pedidos comprados do usuário",
         tags=["Pedido"],
-        summary="Busca todos os pedidos comprado do usuário",
+        summary="Busca todos os pedidos comprados do usuário",
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
