@@ -52,9 +52,9 @@ class PedidoInfoView(ListAPIView):
 
     @extend_schema(
         operation_id="pedido_get",
-        description="Rota que busca todos os pedidos do vendedor",
+        description="Rota que busca todos os pedidos vendidos do usuário",
         tags=["Pedido"],
-        summary="Busca todos os pedidos do vendedor",
+        summary="Busca todos os pedidos vendidos do usuário",
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -70,9 +70,9 @@ class PedidoInfoViewBuy(ListAPIView):
 
     @extend_schema(
         operation_id="pedido_get",
-        description="Rota que busca todos os pedidos do usuários",
+        description="Rota que busca todos os pedidos comprados do usuário",
         tags=["Pedido"],
-        summary="Busca todos os pedidos do usuários",
+        summary="Busca todos os pedidos comprados do usuário",
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
