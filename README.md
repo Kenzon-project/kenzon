@@ -537,8 +537,6 @@ Campos que podem ser atualizados:<br/>
 	]</li>
 </ul>
 
-<h3> Exclusão de produtos </h3><br/>
-
 `PATCH /api/produtos/:id - FORMATO DA RESPOSTA - STATUS 200`<br/>
 
 ```json
@@ -561,6 +559,8 @@ Campos que podem ser atualizados:<br/>
 }
 ```
 
+<h3> Exclusão de produtos </h3><br/>
+
 `DELETE /api/produtos/id`<br/>
 Somente o dono do produto poderá excluí-lo.<br/>
 Não é necessário um corpo da requisição.
@@ -581,6 +581,8 @@ Caso o produto procurado não exista:<br />
 <hr />
 
 <h2 align="center">Carrinho</h2>
+
+<h3> Busca o carrinho </h3><br/>
 
 `GET /api/users/carrinho/`
 Retorna o carrinho do usuário autenticado.<br/>
@@ -625,6 +627,8 @@ Não é necessário corpo de requisição.<br/>
 }
 ```
 
+<h3> Adicona produto ao carrinho </h3><br/>
+
 `POST /api/users/carrinho/produto_id/`
 Adiciona o produto no carrinho do usuário autenticado.
 
@@ -659,6 +663,8 @@ Adiciona o produto no carrinho do usuário autenticado.
   }
 }
 ```
+
+<h3> Altera a quandidade de produto no carrinho </h3><br/>
 
 `PATCH /api/users/carrinho/1/qtd/`
 `FORMATO DA RESPOSTA - STATUS 200`
@@ -701,6 +707,8 @@ remove -> para remover| `PATCH /api/users/carrinho/1/qtd/?remove`<br/>
 
 <h2 align="center">Pedido</h2>
 
+<h3> Busca todos os pedidos </h3><br/>
+
 `GET /api/pedidos/`<br/>
 Somente vendedor pode acessar essa rota.<br/>
 Retorna pedidos do vendedor autenticado.<br/>
@@ -734,6 +742,72 @@ Retorna pedidos do vendedor autenticado.<br/>
 }
 ```
 
+`GET /api/pedidos/info/`<br/>
+O usuário comum ou o vendedor pelo pedido podem acessar essa rota.<br/>
+Retorna um lista de pedidos.<br/>
+
+```json
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "status": "EM ANDAMENTO",
+      "created_at": "2023-05-10T00:01:41.303065Z",
+      "updated_at": "2023-05-10T00:01:41.303065Z",
+      "produtos": [
+        {
+          "id": 2,
+          "nome": "Teclado Mecânico Gamer",
+          "descricao": "Teclado Mecânico Gamer HyperX Alloy Origins Core, RGB - HX-KB7RDX-BR",
+          "img": "https://m.media-amazon.com/images/I/51fJITLrBrS.__AC_SX300_SY300_QL70_ML2_.jpg",
+          "valor": "544.58",
+          "valor_total": 544.58,
+          "quantidade": 1
+        }
+      ],
+      "user_id": 7
+    }
+  ]
+}
+```
+
+`GET /api/pedidos/info/seller`<br/>
+Somente o vendedor pode acessar essa rota.<br/>
+Retorna um lista de pedidos.<br/>
+
+```json
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "status": "EM ANDAMENTO",
+      "created_at": "2023-05-10T00:01:41.303065Z",
+      "updated_at": "2023-05-10T00:01:41.303065Z",
+      "produtos": [
+        {
+          "id": 2,
+          "nome": "Teclado Mecânico Gamer",
+          "descricao": "Teclado Mecânico Gamer HyperX Alloy Origins Core, RGB - HX-KB7RDX-BR",
+          "img": "https://m.media-amazon.com/images/I/51fJITLrBrS.__AC_SX300_SY300_QL70_ML2_.jpg",
+          "valor": "544.58",
+          "valor_total": 544.58,
+          "quantidade": 1
+        }
+      ],
+      "user_id": 7
+    }
+  ]
+}
+```
+
+<h3> Cria pedidos </h3><br/>
+
 `POST /api/pedidos/`<br/>
 Cria pedido para o usuário autenticado, pode ser comum ou vendedor.<br/>
 Não é necessário corpo na requisição.<br/>
@@ -761,6 +835,8 @@ Não é necessário corpo na requisição.<br/>
   "valor_total_pedido": 544.58
 }
 ```
+
+<h3> Altera status do pedido </h3><br/>
 
 `PATCH /api/pedidos/pedido_id/`<br/>
 Somente o vendedor responsável pelo pedido pode acessar essa rota.<br/>
@@ -794,38 +870,6 @@ Retorna o pedido com o status alterado.<br/>
     }
   ],
   "user_id": 7
-}
-```
-
-`GET /api/pedidos/info/`<br/>
-O usuário comum ou o vendedor responsável pelo pedido podem acessar essa rota.<br/>
-Retorna um lista de pedidos.<br/>
-
-```json
-{
-  "count": 1,
-  "next": null,
-  "previous": null,
-  "results": [
-    {
-      "id": 1,
-      "status": "EM ANDAMENTO",
-      "created_at": "2023-05-10T00:01:41.303065Z",
-      "updated_at": "2023-05-10T00:01:41.303065Z",
-      "produtos": [
-        {
-          "id": 2,
-          "nome": "Teclado Mecânico Gamer",
-          "descricao": "Teclado Mecânico Gamer HyperX Alloy Origins Core, RGB - HX-KB7RDX-BR",
-          "img": "https://m.media-amazon.com/images/I/51fJITLrBrS.__AC_SX300_SY300_QL70_ML2_.jpg",
-          "valor": "544.58",
-          "valor_total": 544.58,
-          "quantidade": 1
-        }
-      ],
-      "user_id": 7
-    }
-  ]
 }
 ```
 
