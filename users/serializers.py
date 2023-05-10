@@ -3,7 +3,6 @@ from .models import User
 from rest_framework.validators import UniqueValidator
 from enderecos.serializers import EnderecoSerializer
 from enderecos.models import Endereco
-from carrinhos.models import Carrinho
 from produtos.serializers import ProdutoSerializer
 
 
