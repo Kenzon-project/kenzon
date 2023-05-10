@@ -4,7 +4,6 @@ from rest_framework.validators import UniqueValidator
 from enderecos.serializers import EnderecoSerializer
 from enderecos.models import Endereco
 from produtos.serializers import ProdutoSerializer
-import ipdb
 
 
 class UserSerializer(serializers.ModelSerializer):

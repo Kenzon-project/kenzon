@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from .models import Carrinho, CarrinhoProduto
-from rest_framework.response import Response
-from rest_framework import status
 from produtos.serializers import ProdutoSerializer
-import ipdb
 
 
 class OnlyCarrinhoSerializer(serializers.ModelSerializer):

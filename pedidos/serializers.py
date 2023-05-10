@@ -4,13 +4,9 @@ from carrinhos.models import CarrinhoProduto, Carrinho
 from django.core.mail import send_mail
 from django.conf import settings
 from produtos.models import Produto
-from produtos.serializers import ProdutoSerializer
-from rest_framework.views import Response, status
-import ipdb
 
 
 class PedidoProdutoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Produto
         fields = [
@@ -21,8 +17,6 @@ class PedidoProdutoSerializer(serializers.ModelSerializer):
             "valor",
         ]
         depth = 1
-
-
 
 
 class PedidoSerializer(serializers.ModelSerializer):
@@ -43,22 +37,22 @@ class PedidoSerializer(serializers.ModelSerializer):
             "produtos",
         ]
         read_only_fields = ["id", "created_at", "updated_at", "user_id", "produtos"]
-    
+
     def get_valor_total_pedido(self, pedido):
         return pedido.valor_total
+
     def get_quantidade(self, pedido):
-        qtd = Expedicao.objects.filter(pedido_id = pedido.id).first()
+        qtd = Expedicao.objects.filter(pedido_id=pedido.id).first()
         return qtd.quantidade
 
     def create(self, validated_data: dict):
         user = validated_data["user"]
-        carrinho = Carrinho.objects.filter(
-        id=user.carrinho.id
-        ).first()
+        carrinho = Carrinho.objects.filter(id=user.carrinho.id).first()
         carrinho_lista = CarrinhoProduto.objects.filter(carrinho=carrinho)
         if not len(carrinho_lista):
-            raise serializers.ValidationError({"message": "Seu carrinho não tem produtos para ser criado o pedido."})
-        
+            raise serializers.ValidationError(
+                {"message": "Seu carrinho não tem produtos para ser criado o pedido."}
+            )
 
         vendedores = []
         produtos = []
@@ -68,10 +62,10 @@ class PedidoSerializer(serializers.ModelSerializer):
             if item.quantidade > item.produto.quantidade_estoque:
                 carrinho_lista.delete()
                 raise serializers.ValidationError(
-                {
-                    "message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"
-                }
-            )
+                    {
+                        "message": "Ooops, parece que o estoque acabou, atualize seu carrinho novamente"
+                    }
+                )
             produto = item.produto
             produto.vendidos += item.quantidade
             produto.quantidade_estoque -= item.quantidade
@@ -97,7 +91,7 @@ class PedidoSerializer(serializers.ModelSerializer):
                 produto = item.produto
                 quantidade = item.quantidade
                 Expedicao.objects.create(
-                produto_id=produto, pedido_id=pedido, quantidade=quantidade
+                    produto_id=produto, pedido_id=pedido, quantidade=quantidade
                 )
 
             pedido.produtos.set(produtos_vendedor)
@@ -113,14 +107,14 @@ class PedidoSerializer(serializers.ModelSerializer):
             )
             pedidos.append(pedido)
 
-
         carrinho_lista.delete()
         return pedido
 
-
     def update(self, instance: Pedido, validated_data: dict):
         if not "status" in validated_data:
-            raise serializers.ValidationError({"message": "Nenhum dado para atualizar foi passado"})
+            raise serializers.ValidationError(
+                {"message": "Nenhum dado para atualizar foi passado"}
+            )
         vendedor = Pedido.objects.filter(
             produtos__user=self.context["request"].user, id=instance.id
         )

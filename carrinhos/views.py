@@ -8,7 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from users.permissions import UserPermissions
 from django.shortcuts import get_object_or_404
 from produtos.models import Produto
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 class CarrinhoView(CreateAPIView):
@@ -127,6 +128,20 @@ class CarrinhoEdit(UpdateAPIView):
     @extend_schema(
         operation_id="userCarrinho_patch",
         description="Rota que altera a quantidade de produto no carrinho",
+        parameters=[
+            OpenApiParameter(
+                "add",
+                OpenApiTypes.STR,
+                OpenApiParameter.QUERY,
+                description="Adiciona 1 quantidade ao carrinho, do pedido informado",
+            ),
+            OpenApiParameter(
+                "remove",
+                OpenApiTypes.STR,
+                OpenApiParameter.QUERY,
+                description="Remove 1 quantidade ao carrinho, do pedido informado",
+            ),
+        ],
         tags=["Carrinho"],
         summary="Altera a quantidade de produto no carrinho",
     )

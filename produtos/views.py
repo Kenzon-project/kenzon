@@ -5,7 +5,6 @@ from rest_framework.generics import (
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsSellerOrReadOnly, IsSellerOwnerOrReadOnly
 from .serializers import ProdutoSerializer
-from categorias.serializer import CategoriaSerializer
 from .models import Produto
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
